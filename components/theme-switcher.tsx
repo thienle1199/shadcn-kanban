@@ -19,10 +19,8 @@ const ThemeSwitcher = () => {
     });
   };
 
-  console.log('theme', theme)
-
   return (
-    <div className="flex items-center gap-6 px-6 py-3 mx-6 bg-neutral-100 dark:bg-neutral-800 rounded">
+    <div className="flex items-center justify-center gap-6 px-6 py-3 bg-background rounded">
       {/* Light mode icon */}
       <svg width="19" height="19" xmlns="http://www.w3.org/2000/svg">
         <path
