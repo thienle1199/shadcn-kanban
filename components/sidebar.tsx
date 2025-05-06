@@ -22,7 +22,7 @@ export const Sidebar = () => {
     return (
       <button
         onClick={() => setIsVisible(true)}
-        className="fixed left-0 bottom-8 bg-main-purple hover:bg-primary/90 text-white px-5 py-3 rounded-r-full transition-colors flex items-center gap-2"
+        className="fixed left-0 bottom-8 bg-primary hover:bg-primary/80 text-primary-foreground px-5 py-3 rounded-r-full transition-colors flex items-center gap-2"
       >
         <Eye size={16} />
       </button>
@@ -31,7 +31,7 @@ export const Sidebar = () => {
 
 
   return (
-    <aside className="w-[300px] border-r border-divider py-6 flex flex-col bg-sidebar">
+    <aside className="w-[300px] border-r border-divider py-6 pr-6 flex flex-col bg-sidebar">
       <nav className="flex-1">
         <div className='flex gap-4 mb-8 pl-6'>
           <Image
@@ -50,7 +50,7 @@ export const Sidebar = () => {
           onCreateNew={() => console.log('Create new board')}
         />
       </nav>
-      <div className="space-y-4 px-6">
+      <div className="space-y-4 pl-6">
       <ThemeSwitcher />
 
         <button

@@ -54,11 +54,11 @@ export default function NewBoardDialog({children}: {children: React.ReactNode}) 
       <DialogContent className="sm:max-w-[480px] p-8 bg-background">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle className="text-[18px] font-bold">Add New Board</DialogTitle>
+            <DialogTitle className="text-[18px] font-bold text-foreground-contrast">Add New Board</DialogTitle>
           </DialogHeader>
           <div className="grid gap-6 py-6">
             <div className="grid gap-2">
-              <Label htmlFor="boardName" className="text-xs font-bold text-muted-foreground">
+              <Label htmlFor="boardName" className="text-xs font-bold text-foreground-contrast">
                 Board Name
               </Label>
               <Input
@@ -66,11 +66,11 @@ export default function NewBoardDialog({children}: {children: React.ReactNode}) 
                 placeholder="e.g. Web Design"
                 value={boardName}
                 onChange={(e) => setBoardName(e.target.value)}
-                className="bg-background border-[#828FA340] placeholder:text-muted-foreground/25"
+                className="bg-background border-[#828FA340] placeholder:text-foreground-contrast/25"
               />
             </div>
             <div className="grid gap-3">
-              <Label className="text-xs font-bold text-muted-foreground">
+              <Label className="text-xs font-bold text-foreground-contrast">
                 Board Columns
               </Label>
               <div className="grid gap-3">
@@ -84,7 +84,7 @@ export default function NewBoardDialog({children}: {children: React.ReactNode}) 
                     <Button
                       type="button"
                       variant="ghost"
-                      className="text-muted-foreground hover:text-destructive px-0 hover:bg-transparent"
+                      className="text-foreground-contrast hover:text-destructive px-0 hover:bg-transparent"
                       onClick={() => removeColumn(column.id)}
                     >
                       ×

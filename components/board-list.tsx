@@ -21,7 +21,7 @@ const BoardItem: FC<BoardItemProps> = ({
         ${
           isActive
             ? "bg-primary text-white"
-            : "hover:bg-primary/10 hover:text-primary text-muted-foreground"
+            : "hover:bg-primary/10 hover:text-primary"
         }
       `}
     >
@@ -66,7 +66,7 @@ export const BoardList: FC<BoardListProps> = ({
 }) => {
   return (
     <div className="space-y-1">
-      <h2 className="text-xs font-bold tracking-[.2em] text-muted-foreground px-6 mb-4">
+      <h2 className="text-xs font-bold tracking-[.2em] px-6 mb-4">
         ALL BOARDS ({boards.length})
       </h2>
       <div className="space-y-1">
