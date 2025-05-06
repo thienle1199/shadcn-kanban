@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={plusJakartaSans.variable} suppressHydrationWarning>
-      <body>
+      <body className="bg-light-grey-light-bg dark:bg-very-dark-grey-dark-bg">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

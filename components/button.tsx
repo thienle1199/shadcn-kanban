@@ -25,7 +25,7 @@ export const Button = ({
         'rounded-full font-bold transition-colors',
         {
           // Variants
-          'bg-main-purple text-white hover:bg-main-purple/80': variant === 'primary',
+          'bg-primary hover:bg-primary/80': variant === 'primary',
           'bg-purple-600/10 text-purple-600 hover:bg-purple-600/25': variant === 'secondary',
           'bg-red-500 text-white hover:bg-red-400': variant === 'destructive',
           

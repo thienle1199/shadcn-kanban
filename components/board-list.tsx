@@ -20,7 +20,7 @@ const BoardItem: FC<BoardItemProps> = ({
       className={`w-full flex items-center gap-4 py-3 px-6 rounded-r-full transition-colors
         ${
           isActive
-            ? "bg-main-purple text-white"
+            ? "bg-primary text-white"
             : "hover:bg-primary/10 hover:text-primary text-muted-foreground"
         }
       `}

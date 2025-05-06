@@ -31,10 +31,10 @@ export const Sidebar = () => {
 
 
   return (
-    <aside className="w-[300px] border-r border-border py-6 flex flex-col bg-sidebar">
+    <aside className="w-[300px] border-r border-divider py-6 flex flex-col bg-sidebar">
       <nav className="flex-1">
         <div className='flex gap-4 mb-8 pl-6'>
-          <Image 
+          <Image
             src="/logo.svg"
             alt="Logo"
             width={25}
