@@ -53,6 +53,7 @@
   --background: var(--light-grey-light-bg);
   --sidebar: var(--white);
   --divider: var(--lines-light);
+  --lines: var(--lines-light);
 }
 
 .dark {
@@ -60,6 +61,7 @@
   --sidebar: var(--dark-grey);
   --divider: var(--lines-dark);
   --foreground-contrast: var(--white);
+  --lines: var(--lines-dark);
 }
 
 @theme inline {
@@ -76,6 +78,7 @@
   --font-sans: var(--font-plus-jakarta-sans);
   --font-serif: var(--font-plus-jakarta-sans);
   --font-mono: var(--font-plus-jakarta-sans);
+  --color-lines: var(--lines);
 }
 
 @layer base {
