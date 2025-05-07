@@ -7,90 +7,53 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { getTaskDetails, updateSubtaskStatus, updateTaskStatus } from "@/app/actions/task";
-import { useCallback, useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { updateSubtaskStatus, updateTaskStatus } from "@/app/actions/task";
+import { useEffect, useState } from "react";
 import { MoreVertical } from 'lucide-react';
+import { Tables } from '@/utils/supabase/database.types';
 
-type Props = {
-  taskId: number;
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-};
-
-type SubTask = {
-  id: number;
-  title: string;
-  is_completed: boolean | null;
-};
-
-type Column = {
-  id: number;
-  name: string;
-};
-
-type TaskDetails = {
+type TaskWithSubtasks = {
   id: number;
   title: string;
   description: string | null;
   column_id: number | null;
-  created_at: string | null;
-  due_date: string | null;
-  column: {
-    id: number;
-    name: string;
-  } | null;
-  sub_tasks: SubTask[];
+  sub_tasks: Tables<"sub_tasks">[];
 };
 
-const TaskDetailDialog = ({ taskId, isOpen, onOpenChange }: Props) => {
-  const [taskDetails, setTaskDetails] = useState<TaskDetails | null>(null);
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [currentColumnId, setCurrentColumnId] = useState<number | null>(null);
+type Props = {
+  task: TaskWithSubtasks;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  columns?: Tables<"columns">[];
+};
 
-  const fetchTaskDetails = useCallback(async () => {
-    const { task } = await getTaskDetails(taskId);
-    if (task) {
-      setTaskDetails(task);
-      setCurrentColumnId(task.column_id);
-    }
-  }, [taskId]);
 
-  const fetchColumns = useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("columns")
-      .select("id, name")
-      .order("position");
-    if (data) {
-      setColumns(data);
-    }
-  }, []);
+const TaskDetailDialog = ({ task, isOpen, onOpenChange, columns }: Props) => {
+  const [taskDetails, setTaskDetails] = useState<TaskWithSubtasks>(task);
+  const [currentColumnId, setCurrentColumnId] = useState<number | null>(task.column_id);
 
   useEffect(() => {
-    if (isOpen && taskId) {
-      fetchTaskDetails();
-      fetchColumns();
-    }
-  }, [isOpen, taskId, fetchTaskDetails, fetchColumns]);
+    setTaskDetails(task);
+    setCurrentColumnId(task.column_id);
+  }, [task]);
 
-  const completedSubtasks = taskDetails?.sub_tasks?.filter((st: SubTask) => st.is_completed)?.length ?? 0;
-  const totalSubtasks = taskDetails?.sub_tasks?.length ?? 0;
+  const completedSubtasks = taskDetails.sub_tasks?.filter(st => st.is_completed)?.length ?? 0;
+  const totalSubtasks = taskDetails.sub_tasks?.length ?? 0;
 
   const handleSubtaskToggle = async (subtaskId: number, isCompleted: boolean) => {
     await updateSubtaskStatus(subtaskId, isCompleted);
-    fetchTaskDetails();
+    const updatedSubtasks = taskDetails.sub_tasks.map(st => 
+      st.id === subtaskId ? { ...st, is_completed: isCompleted } : st
+    )
+    setTaskDetails({ ...taskDetails, sub_tasks: updatedSubtasks });
   };
 
   const handleStatusChange = async (columnId: number) => {
     if (columnId === currentColumnId) return;
-    await updateTaskStatus(taskId, columnId);
+    await updateTaskStatus(taskDetails.id, columnId);
     setCurrentColumnId(columnId);
-    fetchTaskDetails();
   };
-
-  if (!taskDetails) return null;
-
+console.log('subtasks', task.sub_tasks)
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] p-8 bg-background">
@@ -116,7 +79,11 @@ const TaskDetailDialog = ({ taskId, isOpen, onOpenChange }: Props) => {
               Subtasks ({completedSubtasks} of {totalSubtasks})
             </Label>
             <div className="grid gap-2">
-              {taskDetails.sub_tasks?.map((subtask: SubTask) => (
+              {taskDetails.sub_tasks?.sort((a, b) => {
+                const dateA = a.id || 0;
+                const dateB = b.id || 0;
+                return dateA - dateB;
+              })?.map((subtask) => (
                 <div
                   key={subtask.id}
                   onClick={() => handleSubtaskToggle(subtask.id, !subtask.is_completed)}
@@ -152,7 +119,7 @@ const TaskDetailDialog = ({ taskId, isOpen, onOpenChange }: Props) => {
               value={currentColumnId ?? ""}
               onChange={(e) => handleStatusChange(Number(e.target.value))}
             >
-              {columns.map((column) => (
+              {columns?.map((column) => (
                 <option key={column.id} value={column.id}>
                   {column.name}
                 </option>

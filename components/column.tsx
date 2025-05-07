@@ -8,6 +8,7 @@ type Props = {
     className?: string;
     tasks?: (Tables<"tasks"> & {sub_tasks: Tables<"sub_tasks">[]})[];
     index?: number;
+    columns?: Tables<"columns">[];
 }
 
 
@@ -20,7 +21,7 @@ const colorsStatus = [
     "#F24C3D",
 ]
 
-const BoardColumn = ({className, name, tasks, index}: Props) => {
+const BoardColumn = ({className, name, tasks, index, columns}: Props) => {
   return (
     <div className={cn(className, 'flex flex-col gap-6 min-w-[280px]')}>
         <div className="flex items-center gap-3">
@@ -29,12 +30,16 @@ const BoardColumn = ({className, name, tasks, index}: Props) => {
         </div>
         <div className="flex flex-col gap-5">
         {tasks?.map((task) => (
-            <TaskCard 
+            <TaskCard
+                column_id={task.column_id}
+                created_at={task.created_at}
+                due_date={task.due_date}
                 id={task.id}
                 key={task.id}
                 title={task.title}
                 description={task.description}
                 sub_tasks={task.sub_tasks}
+                columns={columns}
             />
         ))}
         </div>
