@@ -9,9 +9,9 @@ const BoardPage = async ({params}: Props) => {
   const {boardId} = await params
   
   return (
-    <div>
+    <div className="flex-1">
       <Suspense fallback="Loading...">
-      <BoardColumns boardId={boardId} />
+        <BoardColumns boardId={boardId} />
       </Suspense>
     </div>
   )

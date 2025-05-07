@@ -29,12 +29,12 @@ export default async function RootLayout({
           enableSystem
           // disableTransitionOnChange
         >
-          <div className="flex h-screen transition-all duration-300">
+          <div className="flex h-screen overflow-hidden transition-all duration-300">
             <Sidebar />
             
-            <div className="flex-1 flex flex-col">
+            <div className="flex flex-1 flex-col overflow-auto">
               <Header />
-              <main className="flex-1 p-6 overflow-auto">
+              <main className="p-6 flex-1 overflow-auto">
                 {children}
               </main>
             </div>
