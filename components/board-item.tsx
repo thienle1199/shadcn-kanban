@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC } from "react";
+import { FC, useEffect } from "react";
+import { useBoardStore } from "@/lib/store";
 
 
 interface BoardItemProps {
@@ -21,8 +22,17 @@ const BoardItem: FC<BoardItemProps> = ({
   id,
 }) => {
   const pathname = usePathname();
+  const setActiveBoard = useBoardStore(state => state.setActiveBoard);
 
   const isActive = pathname.startsWith(`/board/${id}`) || pathname === `/board/${id}`;
+
+
+  useEffect(() => {
+    if (isActive) {
+      setActiveBoard(String(id), name);
+    }
+  }, [id, isActive, name, setActiveBoard])
+  
 
   return (
     <Link

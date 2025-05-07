@@ -33,7 +33,7 @@ export default async function RootLayout({
             <Sidebar />
             
             <div className="flex-1 flex flex-col">
-              <Header title="Platform Launch" />
+              <Header />
               <main className="flex-1 p-6 overflow-auto">
                 {children}
               </main>
