@@ -16,7 +16,6 @@ export const BoardList: FC<BoardListProps> = async ({
   //   onCreateNew,
 }) => {
   // const [activeBoard, setActiveBoard] = useState<number | null>(null);
-  // const [boards, setBoards] = useState<Tables<"boards">[]>([]);
   const supabase  = await createClient();
 
 
@@ -33,8 +32,6 @@ export const BoardList: FC<BoardListProps> = async ({
             key={board.id}
             name={board.name}
             id={board.id}
-            // isActive={board.id === activeBoard}
-            // onClick={() => onBoardClick?.(board.id)}
           />
         ))}
 
