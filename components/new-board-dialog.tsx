@@ -33,6 +33,8 @@ export default function NewBoardDialog() {
   const router = useRouter();
   const setActiveBoard = useBoardStore((state) => state.setActiveBoard);
 
+  console.log('isLoading', isLoading)
+
   const addNewColumn = () => {
     setColumns([...columns, { id: Date.now().toString(), name: "" }]);
   };
