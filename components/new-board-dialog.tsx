@@ -10,7 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createBoard } from "@/app/actions/board";
 import { useState } from "react";
+import { useBoardStore } from "@/lib/store";
+import { useRouter } from "next/navigation";
 
 type Column = {
   id: string;
@@ -25,6 +28,10 @@ const defaultColumns: Column[] = [
 export default function NewBoardDialog() {
   const [columns, setColumns] = useState<Column[]>(defaultColumns);
   const [boardName, setBoardName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const setActiveBoard = useBoardStore((state) => state.setActiveBoard);
 
   const addNewColumn = () => {
     setColumns([...columns, { id: Date.now().toString(), name: "" }]);
@@ -38,14 +45,35 @@ export default function NewBoardDialog() {
     setColumns(columns.filter((col) => col.id !== id));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Handle board creation
-    console.log({ boardName, columns });
+    if (!boardName) return;
+
+    try {
+      setIsLoading(true);
+      const validColumns = columns.filter((col) => col.name.trim() !== "");
+      const { board, error } = await createBoard({
+        name: boardName,
+        columns: validColumns,
+      });
+
+      if (error) throw error;
+      if (board) {
+        setActiveBoard(String(board.id), board.name);
+        router.push(`/board/${board.id}`);
+        setOpen(false);
+        setBoardName("");
+        setColumns(defaultColumns);
+      }
+    } catch (error) {
+      console.error("Failed to create board:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button
           className="w-full text-primary hover:text-primary/85 flex items-center gap-4 py-3 px-6 rounded-r-full transition-colors"
