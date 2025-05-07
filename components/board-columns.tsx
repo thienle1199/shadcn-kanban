@@ -18,9 +18,10 @@ const BoardColumns = async ({ boardId }: Props) => {
          id,
          name,
          tasks (
-            id,
-            title,
-            description
+            *,
+            sub_tasks (
+              *
+            )
           )
       )
       `
