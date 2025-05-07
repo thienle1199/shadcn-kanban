@@ -78,7 +78,7 @@ export default function NewBoardDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button
-          className="w-full text-primary hover:text-primary/85 flex items-center gap-4 py-3 px-6 rounded-r-full transition-colors"
+          className="w-full cursor-pointer text-primary hover:text-primary/85 flex items-center gap-4 py-3 px-6 rounded-r-full transition-colors"
         >
           <svg
             width="16"
