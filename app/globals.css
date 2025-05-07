@@ -79,6 +79,7 @@
   --font-serif: var(--font-plus-jakarta-sans);
   --font-mono: var(--font-plus-jakarta-sans);
   --color-lines: var(--lines);
+  --color-muted: var(--medium-grey);
 }
 
 @layer base {

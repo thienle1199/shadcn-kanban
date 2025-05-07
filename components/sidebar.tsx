@@ -4,10 +4,7 @@ import Image from "next/image";
 import { BoardList } from "./board-list";
 import { Suspense } from "react";
 import ThemeSwitcher from "./theme-switcher";
-// import {  useState } from 'react';
-// import { Eye } from 'lucide-react';
-
-// const ThemeSwitcher = dynamic(() => import('./theme-switcher').then((mod) => mod.default), { ssr: false });
+import BoardListSkeleton from "./board-list-skeleton";
 
 export const Sidebar = () => {
   return (
@@ -19,28 +16,14 @@ export const Sidebar = () => {
             kanban
           </h1>
         </div>
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center h-full">
-              Loading...
-            </div>
-          }
-        >
+        <Suspense fallback={<BoardListSkeleton />}>
           <BoardList />
         </Suspense>
       </nav>
       <div className="space-y-4 pl-6">
         <Suspense>
-        <ThemeSwitcher /> 
+          <ThemeSwitcher />
         </Suspense>
-
-        {/* <button
-          onClick={() => setIsVisible(false)}
-          className="w-full flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-        >
-          <EyeOff size={16} />
-          <span className="font-bold text-sm">Hide Sidebar</span>
-        </button>  */}
       </div>
     </aside>
   );

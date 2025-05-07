@@ -33,6 +33,7 @@ const BoardColumn = ({className, name, tasks, index}: Props) => {
         <div className="flex flex-col gap-5">
         {tasks?.map((task) => (
             <TaskCard 
+                id={task.id}
                 key={task.id}
                 title={task.title}
                 description={task.description}

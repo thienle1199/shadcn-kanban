@@ -1,0 +1,168 @@
+"use client";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { getTaskDetails, updateSubtaskStatus, updateTaskStatus } from "@/app/actions/task";
+import { useCallback, useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { MoreVertical } from 'lucide-react';
+
+type Props = {
+  taskId: number;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+type SubTask = {
+  id: number;
+  title: string;
+  is_completed: boolean | null;
+};
+
+type Column = {
+  id: number;
+  name: string;
+};
+
+type TaskDetails = {
+  id: number;
+  title: string;
+  description: string | null;
+  column_id: number | null;
+  created_at: string | null;
+  due_date: string | null;
+  column: {
+    id: number;
+    name: string;
+  } | null;
+  sub_tasks: SubTask[];
+};
+
+const TaskDetailDialog = ({ taskId, isOpen, onOpenChange }: Props) => {
+  const [taskDetails, setTaskDetails] = useState<TaskDetails | null>(null);
+  const [columns, setColumns] = useState<Column[]>([]);
+  const [currentColumnId, setCurrentColumnId] = useState<number | null>(null);
+
+  const fetchTaskDetails = useCallback(async () => {
+    const { task } = await getTaskDetails(taskId);
+    if (task) {
+      setTaskDetails(task);
+      setCurrentColumnId(task.column_id);
+    }
+  }, [taskId]);
+
+  const fetchColumns = useCallback(async () => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("columns")
+      .select("id, name")
+      .order("position");
+    if (data) {
+      setColumns(data);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen && taskId) {
+      fetchTaskDetails();
+      fetchColumns();
+    }
+  }, [isOpen, taskId, fetchTaskDetails, fetchColumns]);
+
+  const completedSubtasks = taskDetails?.sub_tasks?.filter((st: SubTask) => st.is_completed)?.length ?? 0;
+  const totalSubtasks = taskDetails?.sub_tasks?.length ?? 0;
+
+  const handleSubtaskToggle = async (subtaskId: number, isCompleted: boolean) => {
+    await updateSubtaskStatus(subtaskId, isCompleted);
+    fetchTaskDetails();
+  };
+
+  const handleStatusChange = async (columnId: number) => {
+    if (columnId === currentColumnId) return;
+    await updateTaskStatus(taskId, columnId);
+    setCurrentColumnId(columnId);
+    fetchTaskDetails();
+  };
+
+  if (!taskDetails) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[480px] p-8 bg-background">
+        <DialogHeader className="flex flex-row items-start justify-between">
+          <DialogTitle className="text-[18px] font-bold text-foreground-contrast pr-8">
+            {taskDetails.title}
+          </DialogTitle>
+          <button className="text-muted-foreground hover:text-foreground transition-colors">
+            <MoreVertical size={16} />
+          </button>
+        </DialogHeader>
+        <div className="grid gap-6 py-6">
+          {taskDetails.description && (
+            <div>
+              <p className="text-muted-foreground text-[13px] leading-6">
+                {taskDetails.description}
+              </p>
+            </div>
+          )}
+
+          <div className="grid gap-4">
+            <Label className="text-xs font-bold text-foreground-contrast">
+              Subtasks ({completedSubtasks} of {totalSubtasks})
+            </Label>
+            <div className="grid gap-2">
+              {taskDetails.sub_tasks?.map((subtask: SubTask) => (
+                <div
+                  key={subtask.id}
+                  onClick={() => handleSubtaskToggle(subtask.id, !subtask.is_completed)}
+                  className="flex items-center gap-4 p-3 bg-background hover:bg-primary/10 transition-colors rounded-[4px] cursor-pointer dark:bg-[#20212C]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={!!subtask.is_completed}
+                    className="h-4 w-4 rounded border-[#828FA340] text-primary focus:ring-primary"
+                    onChange={() => {}}
+                  />
+                  <span
+                    className={`text-xs ${
+                      subtask.is_completed
+                        ? "text-muted-foreground line-through opacity-50"
+                        : "text-foreground-contrast"
+                    }`}
+                  >
+                    {subtask.title}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="status" className="text-xs font-bold text-foreground-contrast">
+              Current Status
+            </Label>
+            <select
+              id="status"
+              className="h-[40px] w-full rounded-[4px] bg-background border border-[#828FA340] px-4 text-[13px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
+              value={currentColumnId ?? ""}
+              onChange={(e) => handleStatusChange(Number(e.target.value))}
+            >
+              {columns.map((column) => (
+                <option key={column.id} value={column.id}>
+                  {column.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default TaskDetailDialog;
