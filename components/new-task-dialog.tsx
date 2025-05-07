@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createTask } from "@/app/actions/task";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useBoardStore } from "@/lib/store";
 import { createClient } from "@/utils/supabase/client";
 
@@ -37,25 +37,33 @@ export default function NewTaskDialog() {
 
   const activeBoard = useBoardStore(state => state.activeBoard);
 
-  useEffect(() => {
-    const fetchColumns = async () => {
-      if (!activeBoard) return;
-      
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("columns")
-        .select("id, name")
-        .eq("board_id", Number(activeBoard))
-        .order("position");
+  const fetchColumns = useCallback(async () => {
+    if (!activeBoard) return;
+    
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("columns")
+      .select("id, name")
+      .eq("board_id", Number(activeBoard))
+      .order("position");
 
-      if (data) {
-        setColumns(data);
-        setSelectedColumnId(data[0]?.id ?? null);
-      }
-    };
-
-    fetchColumns();
+    if (data) {
+      setColumns(data);
+      setSelectedColumnId(data[0]?.id ?? null);
+    }
   }, [activeBoard]);
+
+  useEffect(() => {
+    if (activeBoard) {
+      fetchColumns();
+    }
+  }, [activeBoard, fetchColumns]);
+
+  useEffect(() => {
+    if (open) {
+      fetchColumns();
+    }
+  }, [open, fetchColumns]);
 
   const addNewSubtask = () => {
     setSubtasks([...subtasks, { id: Date.now().toString(), title: "" }]);
