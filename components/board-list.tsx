@@ -32,6 +32,7 @@ export const BoardList: FC<BoardListProps> = async ({
           <BoardItem
             key={board.id}
             name={board.name}
+            id={board.id}
             // isActive={board.id === activeBoard}
             // onClick={() => onBoardClick?.(board.id)}
           />

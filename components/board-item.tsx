@@ -1,24 +1,32 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FC } from "react";
 
 
 interface BoardItemProps {
   name: string;
-  isActive?: boolean;
   isCreateNew?: boolean;
   onClick?: () => void;
+  id: string | number;
 }
 
 
 
 const BoardItem: FC<BoardItemProps> = ({
   name,
-  isActive,
+  // isActive,
   isCreateNew,
-  onClick,
+  id,
 }) => {
+  const pathname = usePathname();
+
+  const isActive = pathname.startsWith(`/board/${id}`) || pathname === `/board/${id}`;
+
   return (
-    <button
-      onClick={onClick}
+    <Link
+      href={`/board/${id}`}
       className={`w-full flex items-center gap-4 py-3 px-6 rounded-r-full transition-colors
         ${
           isActive
@@ -49,7 +57,7 @@ const BoardItem: FC<BoardItemProps> = ({
       >
         {name}
       </span>
-    </button>
+    </Link>
   );
 };
 

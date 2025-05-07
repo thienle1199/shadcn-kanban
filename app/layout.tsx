@@ -16,13 +16,9 @@ export const metadata = {
 
 export default async function RootLayout({
   children,
-  params
 }: {
   children: React.ReactNode;
-  params: Promise<{ board: string }>;
 }) {
-
-  const { board } = await params
 
   return (
     <html lang="en" className={plusJakartaSans.variable} suppressHydrationWarning>
@@ -39,9 +35,6 @@ export default async function RootLayout({
             <div className="flex-1 flex flex-col">
               <Header title="Platform Launch" />
               <main className="flex-1 p-6 overflow-auto">
-              <p className="bg-amber-400 h-5 w-full">
-            {board}
-            </p>
                 {children}
               </main>
             </div>
