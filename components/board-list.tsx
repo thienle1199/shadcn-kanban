@@ -3,6 +3,7 @@ import { FC } from "react";
 // import { Tables } from "@/utils/supabase/database.types";
 import { createClient } from "@/utils/supabase/server";
 import BoardItem from "./board-item";
+import NewBoardDialog from "./new-board-dialog";
 
 
 interface BoardListProps {
@@ -19,12 +20,12 @@ export const BoardList: FC<BoardListProps> = async ({
   const supabase  = await createClient();
 
 
-  const {data: boards = [], count} = await supabase.from("boards").select("*");
+  const {data: boards = []} = await supabase.from("boards").select("id, name").order("created_at", { ascending: false });
 
   return (
     <div className="space-y-1">
       <h2 className="text-xs font-bold tracking-[.2em] px-6 mb-4">
-        ALL BOARDS ({count})
+        ALL BOARDS ({boards?.length})
       </h2>
       <div className="space-y-1">
         {boards?.map((board) => (
@@ -35,13 +36,7 @@ export const BoardList: FC<BoardListProps> = async ({
           />
         ))}
 
-        {/* <NewBoardDialog>
-          <BoardItem
-            name="+ Create New Board"
-            isCreateNew
-            //   onClick={onCreateNew}
-          />
-        </NewBoardDialog> */}
+        <NewBoardDialog />
       </div>
     </div>
   );

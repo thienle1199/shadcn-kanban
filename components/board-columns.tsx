@@ -27,9 +27,9 @@ const BoardColumns = async ({ boardId }: Props) => {
     .eq("id", Number(boardId))
     .single();
   return (
-    <div className="flex justify-items-start">
-      {board?.columns?.map(({ id, name, tasks }) => (
-        <BoardColumn key={id} name={name} tasks={tasks} />
+    <div className="flex gap-6 p-6 justify-items-start">
+      {board?.columns?.map(({ id, name, tasks }, idx) => (
+        <BoardColumn index={idx}  key={id} name={name} tasks={tasks} />
       ))}
     </div>
   );

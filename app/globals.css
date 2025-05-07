@@ -63,6 +63,7 @@
 }
 
 @theme inline {
+  --color-dark-grey: var(--dark-grey);
   --color-background: var(--background);
   --color-foreground: var(--medium-grey);
   --color-primary-foreground: var(--white);

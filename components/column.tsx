@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import TaskCard from "./task-card";
 
 type Props = {
     name: string;
@@ -9,18 +10,33 @@ type Props = {
         title: string;
         description: string | null;
     }[];
+    index?: number;
 }
 
-const BoardColumn = ({className, name, tasks}: Props) => {
+
+const colorsStatus = [
+    "#49C4E5",
+    "#8471F2",
+    "#67E2AE",
+    "#F6C343",
+    "#FBAF85",
+    "#F24C3D",
+]
+
+const BoardColumn = ({className, name, tasks, index}: Props) => {
   return (
-    <div className={cn(className, 'flex flex-col p-4 mr-4')}>
-        <h2 className="text-lg font-bold mb-4">{name}</h2>
-        <div>
+    <div className={cn(className, 'flex flex-col gap-6')}>
+        <div className="flex items-center gap-3">
+        <span className="w-[15px] h-[15px] rounded-full" style={{backgroundColor: colorsStatus[index || 0]}}></span>
+        <h2 className="text-xs uppercase font-bold">{name} ({tasks?.length})</h2>
+        </div>
+        <div className="flex flex-col gap-5">
         {tasks?.map((task) => (
-            <div key={task.id} className="p-4 min-w-[280px] bg-white rounded-md mb-2">
-                <h3 className="text-lg font-semibold">{task.title}</h3>
-                <p className="text-sm text-gray-600">{task.description}</p>
-            </div>
+            <TaskCard 
+                key={task.id}
+                title={task.title}
+                description={task.description}
+            />
         ))}
         </div>
     </div>

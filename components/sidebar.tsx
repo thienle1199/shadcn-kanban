@@ -3,25 +3,13 @@
 import Image from "next/image";
 import { BoardList } from "./board-list";
 import { Suspense } from "react";
+import ThemeSwitcher from "./theme-switcher";
 // import {  useState } from 'react';
 // import { Eye } from 'lucide-react';
 
 // const ThemeSwitcher = dynamic(() => import('./theme-switcher').then((mod) => mod.default), { ssr: false });
 
 export const Sidebar = () => {
-  // const [isVisible, setIsVisible] = useState(true);
-
-  // if (!isVisible) {
-  //   return (
-  //     <button
-  //       onClick={() => setIsVisible(true)}
-  //       className="fixed left-0 bottom-8 bg-primary hover:bg-primary/80 text-primary-foreground px-5 py-3 rounded-r-full transition-colors flex items-center gap-2"
-  //     >
-  //       <Eye size={16} />
-  //     </button>
-  //   );
-  // }
-
   return (
     <aside className="w-[300px] border-r border-divider py-6 pr-6 flex flex-col bg-sidebar">
       <nav className="flex-1">
@@ -42,7 +30,9 @@ export const Sidebar = () => {
         </Suspense>
       </nav>
       <div className="space-y-4 pl-6">
-        {/* <ThemeSwitcher /> */}
+        <Suspense>
+        <ThemeSwitcher /> 
+        </Suspense>
 
         {/* <button
           onClick={() => setIsVisible(false)}
@@ -50,7 +40,7 @@ export const Sidebar = () => {
         >
           <EyeOff size={16} />
           <span className="font-bold text-sm">Hide Sidebar</span>
-        </button> */}
+        </button>  */}
       </div>
     </aside>
   );
