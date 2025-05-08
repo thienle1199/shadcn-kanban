@@ -53,7 +53,7 @@ const TaskDetailDialog = ({ task, isOpen, onOpenChange, columns }: Props) => {
     await updateTaskStatus(taskDetails.id, columnId);
     setCurrentColumnId(columnId);
   };
-console.log('subtasks', task.sub_tasks)
+  
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] p-8 bg-background">

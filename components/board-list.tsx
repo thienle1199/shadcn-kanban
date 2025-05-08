@@ -12,7 +12,7 @@ interface BoardListProps {
   onCreateNew?: () => void;
 }
 
-export const BoardList: FC<BoardListProps> = async ({
+const BoardList: FC<BoardListProps> = async  ({
   // onBoardClick,
   //   onCreateNew,
 }) => {
@@ -41,3 +41,6 @@ export const BoardList: FC<BoardListProps> = async ({
     </div>
   );
 };
+
+
+export default BoardList;

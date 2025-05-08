@@ -28,7 +28,8 @@ const BoardColumns = async ({ boardId }: Props) => {
       `
     )
     .eq("id", Number(boardId))
-    .single();
+    .single()
+
 
     const boardCollumns = (board?.columns?.map((column) => ({
       id: column.id,

@@ -80,6 +80,8 @@
   --font-mono: var(--font-plus-jakarta-sans);
   --color-lines: var(--lines);
   --color-muted: var(--medium-grey);
+  --breakpoint-mobile: 768px;
+  --breakpoint-tablet: 1024px;
 }
 
 @layer base {
