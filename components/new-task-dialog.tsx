@@ -115,7 +115,7 @@ export default function NewTaskDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button disabled={!activeBoard}>+ Add New Task</Button>
+        <Button disabled={!activeBoard}>+ <span className="hidden mobile:inline">Add New Task</span></Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[480px] p-8 bg-background">
         <form onSubmit={handleSubmit}>

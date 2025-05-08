@@ -29,11 +29,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-light-grey-light-bg dark:bg-very-dark-grey-dark-bg">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex h-screen overflow-hidden transition-all duration-300">
             <Sidebar>
               <Suspense fallback={<BoardListSkeleton />}>
@@ -41,8 +37,15 @@ export default async function RootLayout({
               </Suspense>
             </Sidebar>
 
-            <div data-sidebar-container className="flex flex-1 flex-col overflow-auto transition-[padding] duration-300 tablet:pl-[300px] data-[sidebar-hidden=true]:pl-0">
-              <Header />
+            <div
+              data-sidebar-container
+              className="flex flex-1 flex-col overflow-auto transition-[padding] duration-300 tablet:pl-[300px] data-[sidebar-hidden=true]:pl-0"
+            >
+              <Header>
+                <Suspense fallback={<BoardListSkeleton />}>
+                  <BoardList />
+                </Suspense>
+              </Header>
               <main className="flex-1 overflow-auto flex flex-col">
                 {children}
               </main>
