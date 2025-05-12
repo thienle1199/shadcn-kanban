@@ -1,50 +1,127 @@
-import { cn } from "@/lib/utils";
-import TaskCard from "./task-card";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { useDndContext } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import { useMemo } from "react";
+import { cva } from "class-variance-authority";
+import { Card, CardContent, CardHeader } from "./ui/card";
+import { GripVertical } from "lucide-react";
+import TaskCard, { Task } from "./task-card";
 import { Tables } from "@/utils/supabase/database.types";
 
-type Props = {
-    name: string;
-    // id: string;
-    className?: string;
-    tasks?: (Tables<"tasks"> & {sub_tasks: Tables<"sub_tasks">[]})[];
-    index?: number;
-    columns?: Tables<"columns">[];
+import dynamic from "next/dynamic";
+
+const Button = dynamic(() => import("./ui/button").then((mod) => mod.Button), { ssr: false });
+
+
+export type Column = Pick<Tables<"columns">, "id" | "name">
+
+export type ColumnType = "Column";
+
+export interface ColumnDragData {
+  type: ColumnType;
+  column: Column;
 }
 
+interface BoardColumnProps {
+  column: Column;
+  tasks: Task[];
+  isOverlay?: boolean;
+}
 
-const colorsStatus = [
-    "#49C4E5",
-    "#8471F2",
-    "#67E2AE",
-    "#F6C343",
-    "#FBAF85",
-    "#F24C3D",
-]
+export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
+  const tasksIds = useMemo(() => {
+    return tasks.map((task) => task.id);
+  }, [tasks]);
 
-const BoardColumn = ({className, name, tasks, index, columns}: Props) => {
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: column.id,
+    data: {
+      type: "Column",
+      column,
+    } satisfies ColumnDragData,
+    attributes: {
+      roleDescription: `Column: ${column.name}`,
+    },
+  });
+
+  const style = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  };
+
+  const variants = cva(
+    "w-[350px] max-w-full bg-primary-foreground flex flex-col flex-1 snap-center overflow-hidden",
+    {
+      variants: {
+        dragging: {
+          default: "border-2 border-transparent",
+          over: "ring-2 opacity-30",
+          overlay: "ring-2 ring-primary",
+        },
+      },
+    }
+  );
+
   return (
-    <div className={cn(className, 'flex flex-col gap-6 min-w-[280px]')}>
-        <div className="flex items-center gap-3">
-        <span className="w-[15px] h-[15px] rounded-full" style={{backgroundColor: colorsStatus[index || 0]}}></span>
-        <h2 className="text-xs uppercase font-bold">{name} ({tasks?.length})</h2>
-        </div>
-        <div className="flex flex-col gap-5">
-        {tasks?.map((task) => (
-            <TaskCard
-                column_id={task.column_id}
-                created_at={task.created_at}
-                due_date={task.due_date}
-                id={task.id}
-                key={task.id}
-                title={task.title}
-                description={task.description}
-                sub_tasks={task.sub_tasks}
-                columns={columns}
-            />
-        ))}
-        </div>
-    </div>
-  )
+    <Card
+      ref={setNodeRef}
+      style={style}
+      className={variants({
+        dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
+      })}
+    >
+      <CardHeader className="p-4 font-semibold border-b-2 text-left flex flex-row space-between items-center">
+        <Button
+          variant={"ghost"}
+          {...attributes}
+          {...listeners}
+          className=" p-1 text-primary/50 -ml-2 h-auto cursor-grab relative"
+        >
+          <span className="sr-only">{`Move column: ${column.name}`}</span>
+          <GripVertical />
+        </Button>
+        <span className="ml-auto"> {column.name}</span>
+      </CardHeader>
+        <CardContent className="flex flex-grow flex-col gap-2 p-2 overflow-auto">
+          <SortableContext items={tasksIds}>
+            {tasks.map((task) => (
+              <TaskCard key={task.id} task={task} />
+            ))}
+          </SortableContext>
+        </CardContent>
+    </Card>
+  );
 }
 
-export default BoardColumn
+export function BoardContainer({ children }: { children: React.ReactNode }) {
+    const dndContext = useDndContext();
+  
+    const variations = cva("px-2 md:px-0 gle flex lg:justify-center pb-4", {
+      variants: {
+        dragging: {
+          default: "snap-x snap-mandatory",
+          active: "snap-none",
+        },
+      },
+    });
+  
+    return (
+      <div
+        className={variations({
+          dragging: dndContext.active ? "active" : "default",
+        })}
+      >
+        <div className="flex gap-4 flex-row justify-center">
+          {children}
+        </div>
+      </div>
+    );
+  }
+  

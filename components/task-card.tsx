@@ -1,47 +1,88 @@
-"use client";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { cva } from "class-variance-authority";
+import { GripVertical } from "lucide-react";
+import { Badge } from "./ui/badge";
+import { Tables } from "@/utils/supabase/database.types";
+import dynamic from "next/dynamic";
 
-import React, { useState } from 'react'
-import TaskDetailDialog from './task-detail-dialog';
-import { Tables } from '@/utils/supabase/database.types';
+const Button = dynamic(() => import("./ui/button").then((mod) => mod.Button), { ssr: false });
 
-type TaskWithSubtasks = Tables<"tasks"> & {
-  sub_tasks: Tables<"sub_tasks">[];
-  columns?: Tables<"columns">[];
-};
+export type Task = Pick<Tables<"tasks">, "title" | "description" | "column_id"> & {
+  id: string
+}
 
-type Props = TaskWithSubtasks;
+interface TaskCardProps {
+  task: Task;
+  isOverlay?: boolean;
+}
 
-const TaskCard = ({ title, id, sub_tasks, description, columns, column_id }: Props) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+export type TaskType = "Task";
 
-  const subTaskCompleted = sub_tasks?.filter((task) => task.is_completed).length || 0;
+export interface TaskDragData {
+  type: TaskType;
+  task: Task;
+}
+
+export default function TaskCard({ task, isOverlay }: TaskCardProps) {
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task.id,
+    data: {
+      type: "Task",
+      task,
+    } satisfies TaskDragData,
+    attributes: {
+      roleDescription: "Task",
+    },
+  });
+
+  const style = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  };
+
+  const variants = cva("p-4 min-w-[280px] bg-white dark:bg-dark-grey rounded-lg mb-2 cursor-pointer hover:opacity-80 transition-opacity", {
+    variants: {
+      dragging: {
+        over: "ring-2 opacity-30",
+        overlay: "ring-2 ring-primary",
+      },
+    },
+  });
 
   return (
-    <>
-      <div 
-        onClick={() => setIsDialogOpen(true)}
-        className="p-4 min-w-[280px] bg-white dark:bg-dark-grey rounded-lg mb-2 cursor-pointer hover:opacity-80 transition-opacity"
-      >
-        <h3 className="text-foreground-contrast font-bold mb-2">{title}</h3>
-        <p className='text-foreground text-xs'>
-          {subTaskCompleted} of {sub_tasks?.length} Subtasks
-        </p>
-      </div>
-      
-      <TaskDetailDialog
-        columns={columns}
-        task={{ 
-          id, 
-          title, 
-          description, 
-          column_id, 
-          sub_tasks,
-        }}
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-      />
-    </>
+    <Card
+      ref={setNodeRef}
+      style={style}
+      className={variants({
+        dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
+      })}
+    >
+      <CardHeader className="px-3 py-3 space-between flex flex-row border-b-2 border-secondary relative">
+        <Button
+          variant={"ghost"}
+          {...attributes}
+          {...listeners}
+          className="p-1 text-secondary-foreground/50 -ml-2 h-auto cursor-grab"
+        >
+          <span className="sr-only">Move task</span>
+          <GripVertical />
+        </Button>
+        <Badge variant={"outline"} className="ml-auto font-semibold">
+          Task
+        </Badge>
+      </CardHeader>
+      <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
+        {task.description}
+      </CardContent>
+    </Card>
   );
-};
-
-export default TaskCard;
+}

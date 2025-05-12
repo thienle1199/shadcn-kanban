@@ -8,7 +8,9 @@ const BoardPage = async ({params}: Props) => {
   const {boardId} = await params
   
   return (
-    <BoardColumns boardId={boardId} />
+    <div className="flex flex-1 overflow-hidden">
+      <BoardColumns boardId={boardId} />
+    </div>
   )
 }
 
