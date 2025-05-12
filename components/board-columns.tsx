@@ -30,7 +30,11 @@ const BoardColumns = async ({ boardId }: Props) => {
     .eq("id", Number(boardId))
     .single()
 
-    const {data: tasks} = await supabase.from("tasks").select("*")
+    const {data: tasks} = await supabase.from("tasks").select(`
+        *,
+        sub_tasks (
+        *)
+      `)
 
 
     // const boardCollumns = (board?.columns?.map((column) => ({
@@ -50,6 +54,7 @@ const BoardColumns = async ({ boardId }: Props) => {
       <div className="flex flex-col bg-lines justify-center rounded-md">
         <NewColumnDialog boardId={Number(boardId)} />
       </div>
+      
     </div>
   );
 };

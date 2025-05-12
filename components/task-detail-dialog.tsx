@@ -17,14 +17,14 @@ type TaskWithSubtasks = {
   title: string;
   description: string | null;
   column_id: number | null;
-  sub_tasks: Tables<"sub_tasks">[];
+  sub_tasks: Pick<Tables<"sub_tasks">, "id" | "is_completed" | "title">[];
 };
 
 type Props = {
   task: TaskWithSubtasks;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  columns?: Tables<"columns">[];
+  columns?: Pick<Tables<"columns">, "id" | "name">[];
 };
 
 

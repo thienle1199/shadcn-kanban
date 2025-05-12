@@ -1,21 +1,25 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cva } from "class-variance-authority";
 import { GripVertical } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Tables } from "@/utils/supabase/database.types";
 import dynamic from "next/dynamic";
+import TaskDetailDialog from "./task-detail-dialog";
+import { useState } from "react";
 
 const Button = dynamic(() => import("./ui/button").then((mod) => mod.Button), { ssr: false });
 
 export type Task = Pick<Tables<"tasks">, "title" | "description" | "column_id"> & {
-  id: string
+  id: string,
+  sub_tasks: Pick<Tables<"sub_tasks">, "id" | "is_completed" | "title">[];
 }
 
 interface TaskCardProps {
   task: Task;
   isOverlay?: boolean;
+  columns?: Pick<Tables<"columns">, "id" | "name">[]
 }
 
 export type TaskType = "Task";
@@ -25,7 +29,8 @@ export interface TaskDragData {
   task: Task;
 }
 
-export default function TaskCard({ task, isOverlay }: TaskCardProps) {
+export default function TaskCard({ task, isOverlay, columns = [] }: TaskCardProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {
     setNodeRef,
     attributes,
@@ -59,12 +64,14 @@ export default function TaskCard({ task, isOverlay }: TaskCardProps) {
   });
 
   return (
+    <>
     <Card
       ref={setNodeRef}
       style={style}
       className={variants({
         dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
       })}
+      onClick={()=>setIsDialogOpen(true)}
     >
       <CardHeader className="px-3 py-3 space-between flex flex-row border-b-2 border-secondary relative">
         <Button
@@ -76,13 +83,27 @@ export default function TaskCard({ task, isOverlay }: TaskCardProps) {
           <span className="sr-only">Move task</span>
           <GripVertical />
         </Button>
+        <CardTitle>
+          {task.title}
+        </CardTitle>
         <Badge variant={"outline"} className="ml-auto font-semibold">
           Task
         </Badge>
+
       </CardHeader>
       <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
         {task.description}
       </CardContent>
     </Card>
+    <TaskDetailDialog
+    columns={columns}
+    task={{
+      ...task,
+      id: Number(task.id.replace("task", "")),
+    }}
+    isOpen={isDialogOpen}
+    onOpenChange={setIsDialogOpen}
+  />
+  </>
   );
 }
