@@ -21,7 +21,7 @@ type Subtask = {
 };
 
 type Column = {
-  id: number;
+  id: string;
   name: string;
 };
 
@@ -33,7 +33,7 @@ export default function NewTaskDialog() {
   const [open, setOpen] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [columns, setColumns] = useState<Column[]>([]);
-  const [selectedColumnId, setSelectedColumnId] = useState<number | null>(null);
+  const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
 
   const activeBoard = useBoardStore(state => state.activeBoard);
 
@@ -200,7 +200,7 @@ export default function NewTaskDialog() {
                 id="status"
                 className="h-[40px] w-full rounded-md bg-background border border-[#828FA340] px-3 text-[13px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
                 value={selectedColumnId ?? ""}
-                onChange={(e) => setSelectedColumnId(Number(e.target.value))}
+                onChange={(e) => setSelectedColumnId(e.target.value)}
               >
                 {columns.map(column => (
                   <option key={column.id} value={column.id}>
