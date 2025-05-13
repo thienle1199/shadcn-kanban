@@ -1,13 +1,13 @@
 "use server";
 
-import { TablesInsert } from "@/utils/supabase/database.types";
+import { TablesUpdate } from "@/utils/supabase/database.types";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 type CreateTaskInput = {
   title: string;
   description: string;
-  columnId: number;
+  columnId: string;
   subtasks: { title: string }[];
 };
 
@@ -55,7 +55,7 @@ export async function createTask(data: CreateTaskInput) {
   }
 }
 
-export async function getTaskDetails(taskId: number) {
+export async function getTaskDetails(taskId: string) {
   const supabase = await createClient();
 
   try {
@@ -102,7 +102,7 @@ export async function updateSubtaskStatus(subtaskId: number, isCompleted: boolea
   }
 }
 
-export async function updateTaskStatus(taskId: number, columnId: number) {
+export async function updateTaskStatus(taskId: string, columnId: string) {
   const supabase = await createClient();
 
   try {
@@ -120,13 +120,14 @@ export async function updateTaskStatus(taskId: number, columnId: number) {
   }
 }
 
-export async function updateTaskPositions(updates: TablesInsert<"tasks">) {
+export async function updateTaskPositions(updates: TablesUpdate<"tasks"> & {id: string}) {
   const supabase = await createClient();
   
   try {
     const { error } = await supabase
       .from('tasks')
-      .upsert(updates);
+      .update(updates)
+      .eq("id", updates.id)
 
     if (error) throw error;
     revalidatePath("/board/[boardId]");

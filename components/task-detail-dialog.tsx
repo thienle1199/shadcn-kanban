@@ -11,12 +11,9 @@ import { updateSubtaskStatus, updateTaskStatus } from "@/app/actions/task";
 import { useEffect, useState } from "react";
 import { MoreVertical } from 'lucide-react';
 import { Tables } from '@/utils/supabase/database.types';
+import { Task } from "./task-card";
 
-type TaskWithSubtasks = {
-  id: number;
-  title: string;
-  description: string | null;
-  column_id: number | null;
+type TaskWithSubtasks = Task & {
   sub_tasks: Pick<Tables<"sub_tasks">, "id" | "is_completed" | "title">[];
 };
 
@@ -30,7 +27,7 @@ type Props = {
 
 const TaskDetailDialog = ({ task, isOpen, onOpenChange, columns }: Props) => {
   const [taskDetails, setTaskDetails] = useState<TaskWithSubtasks>(task);
-  const [currentColumnId, setCurrentColumnId] = useState<number | null>(task.column_id);
+  const [currentColumnId, setCurrentColumnId] = useState<string | null>(task.column_id);
 
   useEffect(() => {
     setTaskDetails(task);
@@ -48,7 +45,7 @@ const TaskDetailDialog = ({ task, isOpen, onOpenChange, columns }: Props) => {
     setTaskDetails({ ...taskDetails, sub_tasks: updatedSubtasks });
   };
 
-  const handleStatusChange = async (columnId: number) => {
+  const handleStatusChange = async (columnId: string) => {
     if (columnId === currentColumnId) return;
     await updateTaskStatus(taskDetails.id, columnId);
     setCurrentColumnId(columnId);
@@ -117,7 +114,7 @@ const TaskDetailDialog = ({ task, isOpen, onOpenChange, columns }: Props) => {
               id="status"
               className="h-[40px] w-full rounded-[4px] bg-background border border-[#828FA340] px-4 text-[13px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
               value={currentColumnId ?? ""}
-              onChange={(e) => handleStatusChange(Number(e.target.value))}
+              onChange={(e) => handleStatusChange(e.target.value)}
             >
               {columns?.map((column) => (
                 <option key={column.id} value={column.id}>

@@ -31,7 +31,7 @@ export type Database = {
         Row: {
           board_id: number | null
           created_at: string | null
-          id: number
+          id: string
           name: string
           position: number
           status: string
@@ -39,7 +39,7 @@ export type Database = {
         Insert: {
           board_id?: number | null
           created_at?: string | null
-          id?: never
+          id?: string
           name: string
           position: number
           status: string
@@ -47,7 +47,7 @@ export type Database = {
         Update: {
           board_id?: number | null
           created_at?: string | null
-          id?: never
+          id?: string
           name?: string
           position?: number
           status?: string
@@ -67,21 +67,21 @@ export type Database = {
           created_at: string | null
           id: number
           is_completed: boolean | null
-          task_id: number | null
+          task_id: string
           title: string
         }
         Insert: {
           created_at?: string | null
           id?: never
           is_completed?: boolean | null
-          task_id?: number | null
+          task_id: string
           title: string
         }
         Update: {
           created_at?: string | null
           id?: never
           is_completed?: boolean | null
-          task_id?: number | null
+          task_id?: string
           title?: string
         }
         Relationships: [
@@ -96,29 +96,29 @@ export type Database = {
       }
       tasks: {
         Row: {
-          column_id: number | null
+          column_id: string
           created_at: string | null
           description: string | null
           due_date: string | null
-          id: number
+          id: string
           position: number | null
           title: string
         }
         Insert: {
-          column_id?: number | null
+          column_id: string
           created_at?: string | null
           description?: string | null
           due_date?: string | null
-          id?: never
+          id?: string
           position?: number | null
           title: string
         }
         Update: {
-          column_id?: number | null
+          column_id?: string
           created_at?: string | null
           description?: string | null
           due_date?: string | null
-          id?: never
+          id?: string
           position?: number | null
           title?: string
         }

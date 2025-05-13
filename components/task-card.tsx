@@ -11,7 +11,7 @@ import { useState } from "react";
 
 const Button = dynamic(() => import("./ui/button").then((mod) => mod.Button), { ssr: false });
 
-export type Task = Pick<Tables<"tasks">, "title" | "description" | "column_id" | "id"> & {
+export type Task = Pick<Tables<"tasks">, "title" | "description" | "column_id" | "id" | "position"> & {
   sub_tasks: Pick<Tables<"sub_tasks">, "id" | "is_completed" | "title">[];
 }
 
@@ -91,7 +91,7 @@ export default function TaskCard({ task, isOverlay, columns = [] }: TaskCardProp
 
       </CardHeader>
       <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-        {task.description}
+        {task.description} - {task.position}
       </CardContent>
     </Card>
     <TaskDetailDialog

@@ -18,6 +18,7 @@ const BoardColumns = async ({ boardId }: Props) => {
        columns (
          id,
          name,
+         position,
          tasks (
             *,
             sub_tasks (
@@ -28,13 +29,16 @@ const BoardColumns = async ({ boardId }: Props) => {
       `
     )
     .eq("id", Number(boardId))
+    .order('position', { referencedTable: 'columns' })
     .single()
 
     const {data: tasks} = await supabase.from("tasks").select(`
         *,
         sub_tasks (
         *)
-      `)
+      `).order("position")
+
+      console.log('tasks', tasks)
 
 
     // const boardCollumns = (board?.columns?.map((column) => ({

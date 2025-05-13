@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 const Button = dynamic(() => import("./ui/button").then((mod) => mod.Button), { ssr: false });
 
 
-export type Column = Pick<Tables<"columns">, "id" | "name">
+export type Column = Pick<Tables<"columns">, "id" | "name" | "position">
 
 export type ColumnType = "Column";
 
@@ -87,10 +87,10 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
           <span className="sr-only">{`Move column: ${column.name}`}</span>
           <GripVertical />
         </Button>
-        <span className="ml-auto"> {column.name}</span>
+        <span className="ml-auto"> {column.name} - {column.position}</span>
       </CardHeader>
         <CardContent className="flex flex-grow flex-col gap-2 p-2 overflow-auto">
-          <SortableContext items={tasksIds}>
+          <SortableContext id={column.id} items={tasksIds}>
             {tasks.map((task) => (
               <TaskCard key={task.id} task={task} />
             ))}

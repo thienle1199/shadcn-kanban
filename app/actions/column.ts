@@ -1,6 +1,6 @@
 "use server";
 
-import { TablesInsert } from "@/utils/supabase/database.types";
+import { TablesUpdate } from "@/utils/supabase/database.types";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
@@ -45,13 +45,14 @@ export async function createColumn(data: CreateColumnInput) {
   }
 }
 
-export async function updateColumnPositions(updates: TablesInsert<"columns">[]) {
+export async function updateColumnPositions(updates: TablesUpdate<"columns"> & {id: string}) {
   const supabase = await createClient();
   
   try {
     const { error } = await supabase
       .from('columns')
-      .upsert(updates);
+      .update(updates)
+      .eq("id", updates.id)
 
     if (error) throw error;
     revalidatePath("/board/[boardId]");
