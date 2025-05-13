@@ -101,6 +101,7 @@ export type Database = {
           description: string | null
           due_date: string | null
           id: number
+          position: number | null
           title: string
         }
         Insert: {
@@ -109,6 +110,7 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: never
+          position?: number | null
           title: string
         }
         Update: {
@@ -117,6 +119,7 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: never
+          position?: number | null
           title?: string
         }
         Relationships: [
