@@ -11,8 +11,7 @@ import { useState } from "react";
 
 const Button = dynamic(() => import("./ui/button").then((mod) => mod.Button), { ssr: false });
 
-export type Task = Pick<Tables<"tasks">, "title" | "description" | "column_id"> & {
-  id: string,
+export type Task = Pick<Tables<"tasks">, "title" | "description" | "column_id" | "id"> & {
   sub_tasks: Pick<Tables<"sub_tasks">, "id" | "is_completed" | "title">[];
 }
 
@@ -97,10 +96,7 @@ export default function TaskCard({ task, isOverlay, columns = [] }: TaskCardProp
     </Card>
     <TaskDetailDialog
     columns={columns}
-    task={{
-      ...task,
-      id: Number(task.id.replace("task", "")),
-    }}
+    task={task}
     isOpen={isDialogOpen}
     onOpenChange={setIsDialogOpen}
   />

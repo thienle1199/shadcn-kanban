@@ -47,10 +47,7 @@ const BoardColumns = async ({ boardId }: Props) => {
       {/* {board?.columns?.map(({ id, name, tasks }) => (
         <BoardColumn key={id} column={{id: id, name: name}} tasks={tasks} />
       ))} */}
-      <KanbanBoard initialColumns={board?.columns} initialTasks={tasks?.map(item => ({
-        ...item,
-        id: "task"+item.id
-      })) || []} />
+      <KanbanBoard initialColumns={board?.columns} initialTasks={tasks|| []} />
       <div className="flex flex-col bg-lines justify-center rounded-md">
         <NewColumnDialog boardId={Number(boardId)} />
       </div>
